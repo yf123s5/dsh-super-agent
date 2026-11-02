@@ -42,7 +42,7 @@ dsh superagent --from-default-profile web --dump-config > /dev/null
 dsh plugin --profile superagent add "link:$PWD"
 ```
 
-第一条命令从 DSH 的 Web 模板创建 `~/.dsh/profiles/superagent`（`DSH_HOME` 可改变 `~/.dsh` 的位置）；profile 已存在时不要执行它，它会替换 profile 并删除已有的 `cordis.patch.yml`。第二条命令把当前目录以 link 方式装进该 profile。
+第一条命令从 DSH 的 Web 模板创建 `~/.dsh/profiles/superagent`（设置了 `DSH_HOME` 时路径为 `$DSH_HOME/profiles/superagent`）；profile 已存在时不要执行它：它会重置 profile，删除已有的 `cordis.patch.yml`，并移除其 package.json 里的 bundle 与依赖。第二条命令把当前目录以 link 方式装进该 profile。
 
 ### 5. 写入机器配置
 
@@ -50,7 +50,7 @@ dsh plugin --profile superagent add "link:$PWD"
 cp examples/profile.cordis.patch.yml ~/.dsh/profiles/superagent/cordis.patch.yml
 ```
 
-编辑该文件并替换其中所有 `<placeholder>`：`stateDir` 必须是绝对路径，数据库、锁、命令 shim 与工作目录都放在这里（升级前先备份）；`webserver.port` 默认是 `3082`。需要 Feishu 时按注释启用 `dsh-superagent-feishu`。
+编辑该文件并替换其中所有 `<placeholder>`：`stateDir` 必须是绝对路径，数据库、锁、命令 shim 与工作目录都放在这里（升级前先备份）；`webserver.port` 在示例中设为 `3082`（DSH Web 模板本身默认 `3080`），端口需要空闲。设置过 `DSH_HOME` 时，把上面的 `~/.dsh` 换成 `$DSH_HOME`。需要 Feishu 时按注释启用 `dsh-superagent-feishu`。
 
 ### 6. 启动、检查与停止
 
@@ -60,7 +60,7 @@ scripts/dsh-superagent status   # 0 运行正常；1 未运行或无响应；2 �
 scripts/dsh-superagent stop
 ```
 
-`start` 会在 tmux 会话 `dsh-superagent` 中运行 `dsh --profile superagent`。
+`start` 会在 tmux 会话 `dsh-superagent` 中运行 `dsh --profile superagent --no-open`；如果面板地址上已有实例在应答，它会拒绝启动。
 
 ### 7. 打开面板
 
